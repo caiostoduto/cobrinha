@@ -25,13 +25,12 @@ class Runner:
     try:
       while True:
         for event in pygame.event.get():
-          # Break from while True loop if user closes window
-          if event.type == pygame.QUIT:
-            break
-          
-          # Handle user input
-          if event.type == pygame.KEYDOWN:
-            self._controls(event)
+          match event.type:
+            # Break from while True loop if user closes window
+            case pygame.QUIT:
+              break
+            case pygame.KEYDOWN:
+              self._controls(event)
         else:
           self._draw()
           self.clock.tick(self.tickrate)
@@ -45,13 +44,13 @@ class Runner:
 
   def _controls(self, event):
     match event.key:
-      case pygame.K_LEFT:
+      case pygame.K_LEFT | pygame.K_a:
         self.vel = (-self.block_size[0], 0)
-      case pygame.K_RIGHT:
+      case pygame.K_RIGHT | pygame.K_d:
         self.vel = (+self.block_size[0], 0)
-      case pygame.K_UP:
+      case pygame.K_UP | pygame.K_w:
         self.vel = (0, -self.block_size[1])
-      case pygame.K_DOWN:
+      case pygame.K_DOWN | pygame.K_s:
         self.vel = (0, +self.block_size[1])
 
   def _draw(self):
