@@ -67,13 +67,17 @@ class Runner:
   def _controls(self, event):
     match event.key:
       case pygame.K_LEFT | pygame.K_a:
-        self.vel = (-self.block_size[0], 0)
+        if self.vel != (+self.block_size[0], 0):
+          self.vel = (-self.block_size[0], 0)
       case pygame.K_RIGHT | pygame.K_d:
-        self.vel = (+self.block_size[0], 0)
+        if self.vel != (-self.block_size[0], 0):
+          self.vel = (+self.block_size[0], 0)
       case pygame.K_UP | pygame.K_w:
-        self.vel = (0, -self.block_size[1])
+        if self.vel != (0, +self.block_size[1]):
+          self.vel = (0, -self.block_size[1])
       case pygame.K_DOWN | pygame.K_s:
-        self.vel = (0, +self.block_size[1])
+        if self.vel != (0, -self.block_size[1]):
+          self.vel = (0, +self.block_size[1])
 
   def _draw(self):
     self.dis.fill((0, 0, 0))
