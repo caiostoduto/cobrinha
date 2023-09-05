@@ -89,6 +89,13 @@ class Runner:
     self.last_vel = self.vel
 
   def _checkCollision(self, next_head_pos: tuple) -> bool:
+    return self._checkCollisionBorder(next_head_pos) \
+      or self._checkCollisionSnakeBody(next_head_pos)
+  
+  def _checkCollisionSnakeBody(self, next_head_pos: tuple) -> bool:
+    return next_head_pos in self.snake_body and next_head_pos != self.snake_body[0]
+
+  def _checkCollisionBorder(self, next_head_pos: tuple) -> bool:
     return next_head_pos[0] < 0 or next_head_pos[1] < 0 \
       or next_head_pos[0] > self.dis.get_width() - BLOCK_SIZE[0] \
       or next_head_pos[1] > self.dis.get_height() - BLOCK_SIZE[1]
