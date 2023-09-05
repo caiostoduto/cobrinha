@@ -67,6 +67,7 @@ class Runner:
 
   def _reload(self, size):
     self.vel = (0, 0)
+    self.last_vel = (0, 0)
     self.game_over = False
     self.snake_color = (0, 255, 0)
     self.snake_size = 4
@@ -85,6 +86,7 @@ class Runner:
 
   def _moveSnake(self, next_head_pos: list):
     self.snake_body = [next_head_pos] + self.snake_body[0:self.snake_size - 1]
+    self.last_vel = self.vel
 
   def _checkCollision(self, next_head_pos: tuple) -> bool:
     return next_head_pos[0] < 0 or next_head_pos[1] < 0 \
@@ -94,16 +96,16 @@ class Runner:
   def _controls(self, event):
     match event.key:
       case pygame.K_LEFT | pygame.K_a:
-        if self.vel != (+BLOCK_SIZE[0], 0):
+        if self.last_vel != (+BLOCK_SIZE[0], 0):
           self.vel = (-BLOCK_SIZE[0], 0)
       case pygame.K_RIGHT | pygame.K_d:
-        if self.vel != (-BLOCK_SIZE[0], 0):
+        if self.last_vel != (-BLOCK_SIZE[0], 0):
           self.vel = (+BLOCK_SIZE[0], 0)
       case pygame.K_UP | pygame.K_w:
-        if self.vel != (0, +BLOCK_SIZE[1]):
+        if self.last_vel != (0, +BLOCK_SIZE[1]):
           self.vel = (0, -BLOCK_SIZE[1])
       case pygame.K_DOWN | pygame.K_s:
-        if self.vel != (0, -BLOCK_SIZE[1]):
+        if self.last_vel != (0, -BLOCK_SIZE[1]):
           self.vel = (0, +BLOCK_SIZE[1])
       case pygame.K_r:
         self._reload(self.dis.get_size())
