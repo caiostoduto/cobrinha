@@ -28,12 +28,13 @@ class Runner:
               self._controls(event)
         else:
           if self.game_over == False:
-            next_snake_pos = self._calcNextSnakePos()
-            if self._checkCollision(next_snake_pos):
+            next_head_pos = self._calcNextSnakePos()
+
+            if self._checkCollision(next_head_pos):
               self.game_over = True
               self.snake_color = (255, 0, 0)
             else:
-              self._moveSnake(next_snake_pos)
+              self._moveSnake(next_head_pos)
             self._draw()
 
           self.clock.tick(self.tickrate)
@@ -49,22 +50,23 @@ class Runner:
     self.vel = (0, 0)
     self.game_over = False
     self.snake_color = (0, 255, 0)
-    self.snake_pos = tuple(
-      sum(ti) / 2 for ti in zip(size, self.block_size)
+    self.snake_size = 4
+    self.snake_body = [
+      list(sum(ti) / 2 for ti in zip(size, self.block_size))
+    ]
+
+  def _calcNextSnakePos(self) -> list:
+    return list(
+      sum(ti) for ti in zip(self.snake_body[0], self.vel)
     )
 
-  def _calcNextSnakePos(self) -> tuple:
-    return tuple(
-      sum(ti) for ti in zip(self.snake_pos, self.vel)
-    )
+  def _moveSnake(self, next_head_pos: list):
+    self.snake_body = [next_head_pos] + self.snake_body[0:self.snake_size - 1]
 
-  def _moveSnake(self, next_snake_pos: tuple):
-    self.snake_pos = next_snake_pos
-
-  def _checkCollision(self, next_snake_pos: tuple) -> bool:
-    return next_snake_pos[0] < 0 or next_snake_pos[1] < 0 \
-      or next_snake_pos[0] > self.dis.get_width() - self.block_size[0] \
-      or next_snake_pos[1] > self.dis.get_height() - self.block_size[1]
+  def _checkCollision(self, next_head_pos: tuple) -> bool:
+    return next_head_pos[0] < 0 or next_head_pos[1] < 0 \
+      or next_head_pos[0] > self.dis.get_width() - self.block_size[0] \
+      or next_head_pos[1] > self.dis.get_height() - self.block_size[1]
 
   def _controls(self, event):
     match event.key:
@@ -89,10 +91,11 @@ class Runner:
     pygame.display.update()
 
   def _drawSnake(self):
-    pygame.draw.rect(
-      self.dis, self.snake_color,
-      self.snake_pos + self.block_size
-    )
+    for pos in self.snake_body:
+      pygame.draw.rect(
+        self.dis, self.snake_color,
+        pos + list(self.block_size)
+      )
 
 if __name__ == '__main__':
   Runner((990, 490)).run()
