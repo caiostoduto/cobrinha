@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 
 
 class Runner:
@@ -52,11 +52,11 @@ class Runner:
     self.snake_color = (0, 255, 0)
     self.snake_size = 4
     self.snake_body = [
-      list(sum(ti) / 2 for ti in zip(size, self.block_size))
+      tuple(sum(ti) / 2 for ti in zip(size, self.block_size))
     ]
 
   def _calcNextSnakePos(self) -> list:
-    return list(
+    return tuple(
       sum(ti) for ti in zip(self.snake_body[0], self.vel)
     )
 
@@ -94,7 +94,7 @@ class Runner:
     for pos in self.snake_body:
       pygame.draw.rect(
         self.dis, self.snake_color,
-        pos + list(self.block_size)
+        pos + self.block_size
       )
 
 if __name__ == '__main__':
