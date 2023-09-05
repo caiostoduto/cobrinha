@@ -11,9 +11,7 @@ class Runner:
     self.clock = pygame.time.Clock()
 
     self.tickrate = 15
-    self._reload(size)
-
-    pygame.display.set_caption('Cobrinha by Caio Stoduto © 2023')
+    self._restart(size)
 
   # Game loop
   def run(self):
@@ -28,12 +26,13 @@ class Runner:
             case pygame.KEYDOWN:
               self._controls(event)
         else:
-          if self.game_over == False:
+          if self.status != "Game Over":
             next_head_pos = self._calcNextSnakePos()
 
             if self._checkCollision(next_head_pos):
-              self.game_over = True
+              self.status = "Game Over"
               self.snake_color = (255, 0, 0)
+              self._updateCaption()
             else:
               self._moveSnake(next_head_pos)
               self._checkFood()
@@ -48,10 +47,15 @@ class Runner:
     pygame.quit()
     quit()
 
+  def _updateCaption(self):
+    pygame.display.set_caption(f'Cobrinha by Caio Stoduto © 2023 | Score: {self.score} | Status: {self.status}')
+
   def _checkFood(self):
     if self.snake_body[0] in self.food:
       self.food.remove(self.snake_body[0])
       self.snake_size += 1
+      self.score += 1
+      self._updateCaption()
       self._createFood(self.dis.get_size())
 
   def _createFood(self, size):
@@ -65,12 +69,14 @@ class Runner:
     else:
       self.food.append(new_food)
 
-  def _reload(self, size):
+  def _restart(self, size):
     self.vel = (0, 0)
     self.last_vel = (0, 0)
-    self.game_over = False
+    self.status = "Running"
     self.snake_color = (0, 255, 0)
     self.snake_size = 4
+    self.score = 0
+    self._updateCaption()
     self.snake_body = [
       tuple(sum(ti) / 2 for ti in zip(size, BLOCK_SIZE))
     ]
@@ -115,7 +121,7 @@ class Runner:
         if self.last_vel != (0, -BLOCK_SIZE[1]):
           self.vel = (0, +BLOCK_SIZE[1])
       case pygame.K_r:
-        self._reload(self.dis.get_size())
+        self._restart(self.dis.get_size())
 
   def _draw(self):
     self.dis.fill((0, 0, 0))
