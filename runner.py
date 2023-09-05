@@ -69,4 +69,4 @@ class Runner:
     )
 
 if __name__ == '__main__':
-  Runner((1000, 500)).run()
+  Runner((990, 490)).run()
