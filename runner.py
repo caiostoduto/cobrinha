@@ -1,5 +1,7 @@
 import pygame, random
 
+BLOCK_SIZE = (10, 10)
+FOOD_AMOUNT = 5
 
 class Runner:
   # Create pygame window
@@ -9,7 +11,6 @@ class Runner:
     self.clock = pygame.time.Clock()
 
     self.tickrate = 15
-    self.block_size = (10, 10)
     self._reload(size)
 
     pygame.display.set_caption('Cobrinha by Caio Stoduto © 2023')
@@ -35,6 +36,7 @@ class Runner:
               self.snake_color = (255, 0, 0)
             else:
               self._moveSnake(next_head_pos)
+              self._checkFood()
             self._draw()
 
           self.clock.tick(self.tickrate)
@@ -46,14 +48,35 @@ class Runner:
     pygame.quit()
     quit()
 
+  def _checkFood(self):
+    if self.snake_body[0] in self.food:
+      self.food.remove(self.snake_body[0])
+      self.snake_size += 1
+      self._createFood(self.dis.get_size())
+
+  def _createFood(self, size):
+    new_food = tuple([
+      round(random.randrange(0, size[0] - BLOCK_SIZE[0]) / 10.0) * 10.0,
+      round(random.randrange(0, size[1] - BLOCK_SIZE[1]) / 10.0) * 10.0
+    ])
+
+    if new_food in self.snake_body or new_food in self.food:
+      self._createFood(size)
+    else:
+      self.food.append(new_food)
+
   def _reload(self, size):
     self.vel = (0, 0)
     self.game_over = False
     self.snake_color = (0, 255, 0)
     self.snake_size = 4
     self.snake_body = [
-      tuple(sum(ti) / 2 for ti in zip(size, self.block_size))
+      tuple(sum(ti) / 2 for ti in zip(size, BLOCK_SIZE))
     ]
+
+    self.food = []
+    for _ in range(FOOD_AMOUNT):
+      self._createFood(self.dis.get_size())
 
   def _calcNextSnakePos(self) -> list:
     return tuple(
@@ -65,36 +88,44 @@ class Runner:
 
   def _checkCollision(self, next_head_pos: tuple) -> bool:
     return next_head_pos[0] < 0 or next_head_pos[1] < 0 \
-      or next_head_pos[0] > self.dis.get_width() - self.block_size[0] \
-      or next_head_pos[1] > self.dis.get_height() - self.block_size[1]
+      or next_head_pos[0] > self.dis.get_width() - BLOCK_SIZE[0] \
+      or next_head_pos[1] > self.dis.get_height() - BLOCK_SIZE[1]
 
   def _controls(self, event):
     match event.key:
       case pygame.K_LEFT | pygame.K_a:
-        if self.vel != (+self.block_size[0], 0):
-          self.vel = (-self.block_size[0], 0)
+        if self.vel != (+BLOCK_SIZE[0], 0):
+          self.vel = (-BLOCK_SIZE[0], 0)
       case pygame.K_RIGHT | pygame.K_d:
-        if self.vel != (-self.block_size[0], 0):
-          self.vel = (+self.block_size[0], 0)
+        if self.vel != (-BLOCK_SIZE[0], 0):
+          self.vel = (+BLOCK_SIZE[0], 0)
       case pygame.K_UP | pygame.K_w:
-        if self.vel != (0, +self.block_size[1]):
-          self.vel = (0, -self.block_size[1])
+        if self.vel != (0, +BLOCK_SIZE[1]):
+          self.vel = (0, -BLOCK_SIZE[1])
       case pygame.K_DOWN | pygame.K_s:
-        if self.vel != (0, -self.block_size[1]):
-          self.vel = (0, +self.block_size[1])
+        if self.vel != (0, -BLOCK_SIZE[1]):
+          self.vel = (0, +BLOCK_SIZE[1])
       case pygame.K_r:
         self._reload(self.dis.get_size())
 
   def _draw(self):
     self.dis.fill((0, 0, 0))
     self._drawSnake()
+    self._drawFood()
     pygame.display.update()
+
+  def _drawFood(self):
+    for pos in self.food:
+      pygame.draw.rect(
+        self.dis, (0, 0, 255),
+        pos + BLOCK_SIZE
+      )
 
   def _drawSnake(self):
     for pos in self.snake_body:
       pygame.draw.rect(
         self.dis, self.snake_color,
-        pos + self.block_size
+        pos + BLOCK_SIZE
       )
 
 if __name__ == '__main__':
