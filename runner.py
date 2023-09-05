@@ -10,6 +10,7 @@ class Runner:
 
     self.tickrate = 15
     self.vel = (0, 0)
+    self.game_over = False
 
     self.snake_color = (0, 255, 0)
     self.block_size = (10, 10)
@@ -32,7 +33,15 @@ class Runner:
             case pygame.KEYDOWN:
               self._controls(event)
         else:
-          self._draw()
+          if self.game_over == False:
+            next_snake_pos = self._calcNextSnakePos()
+            if self._checkCollision(next_snake_pos):
+              self.game_over = True
+              self.snake_color = (255, 0, 0)
+            else:
+              self._moveSnake(next_snake_pos)
+            self._draw()
+
           self.clock.tick(self.tickrate)
           continue
         break
@@ -41,6 +50,19 @@ class Runner:
 
     pygame.quit()
     quit()
+
+  def _calcNextSnakePos(self) -> tuple:
+    return tuple(
+      sum(ti) for ti in zip(self.snake_pos, self.vel)
+    )
+
+  def _moveSnake(self, next_snake_pos: tuple):
+    self.snake_pos = next_snake_pos
+
+  def _checkCollision(self, next_snake_pos: tuple) -> bool:
+    return next_snake_pos[0] < 0 or next_snake_pos[1] < 0 \
+      or next_snake_pos[0] > self.dis.get_width() - self.block_size[0] / 2 \
+      or next_snake_pos[1] > self.dis.get_height() - self.block_size[1] / 2 
 
   def _controls(self, event):
     match event.key:
@@ -59,10 +81,6 @@ class Runner:
     pygame.display.update()
 
   def _drawSnake(self):
-    self.snake_pos = tuple(
-      sum(ti) for ti in zip(self.snake_pos, self.vel)
-    )
-    
     pygame.draw.rect(
       self.dis, self.snake_color,
       self.snake_pos + self.block_size
