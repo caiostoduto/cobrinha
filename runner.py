@@ -63,8 +63,8 @@ class Runner:
 
   def _checkCollision(self, next_snake_pos: tuple) -> bool:
     return next_snake_pos[0] < 0 or next_snake_pos[1] < 0 \
-      or next_snake_pos[0] > self.dis.get_width() - self.block_size[0] / 2 \
-      or next_snake_pos[1] > self.dis.get_height() - self.block_size[1] / 2 
+      or next_snake_pos[0] > self.dis.get_width() - self.block_size[0] \
+      or next_snake_pos[1] > self.dis.get_height() - self.block_size[1]
 
   def _controls(self, event):
     match event.key:
