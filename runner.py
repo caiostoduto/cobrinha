@@ -9,14 +9,8 @@ class Runner:
     self.clock = pygame.time.Clock()
 
     self.tickrate = 15
-    self.vel = (0, 0)
-    self.game_over = False
-
-    self.snake_color = (0, 255, 0)
     self.block_size = (10, 10)
-    self.snake_pos = tuple(
-      sum(ti) / 2 for ti in zip(size, self.block_size)
-    )
+    self._reload(size)
 
     pygame.display.set_caption('Cobrinha by Caio Stoduto © 2023')
 
@@ -51,6 +45,14 @@ class Runner:
     pygame.quit()
     quit()
 
+  def _reload(self, size):
+    self.vel = (0, 0)
+    self.game_over = False
+    self.snake_color = (0, 255, 0)
+    self.snake_pos = tuple(
+      sum(ti) / 2 for ti in zip(size, self.block_size)
+    )
+
   def _calcNextSnakePos(self) -> tuple:
     return tuple(
       sum(ti) for ti in zip(self.snake_pos, self.vel)
@@ -78,6 +80,8 @@ class Runner:
       case pygame.K_DOWN | pygame.K_s:
         if self.vel != (0, -self.block_size[1]):
           self.vel = (0, +self.block_size[1])
+      case pygame.K_r:
+        self._reload(self.dis.get_size())
 
   def _draw(self):
     self.dis.fill((0, 0, 0))
