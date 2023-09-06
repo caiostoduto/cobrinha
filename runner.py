@@ -79,7 +79,7 @@ class Runner:
     quit()
 
   def _updateCaption(self):
-    pygame.display.set_caption(f'Cobrinha by Caio Stoduto © 2023 | Score: {" v ".join(map(str, self.score))} | Status: {self.status}')
+    pygame.display.set_caption(f'Cobrinha by Caio Stoduto @ 2023 | Score: {" v ".join(map(str, self.score))} | Status: {self.status}')
 
   def _checkFood(self, player: snake.Snake, next_pos: tuple):
     if self.food.checkCollision(next_pos):
