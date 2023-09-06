@@ -35,9 +35,10 @@ class Snake:
     if self._last_vel != (-vel[0], -vel[1]):
       self._vel = vel
 
-  def checkCollision(self, next_pos: tuple) -> bool:
+  def checkCollision(self, next_pos: tuple, oponnent) -> bool:
     return self._checkBorderCollision(next_pos) \
-      or self._checkBodyCollision(next_pos)
+      or self._checkBodyCollision(next_pos) \
+      or self._checkOpponentCollision(next_pos, oponnent)
 
   def _checkBorderCollision(self, next_pos: tuple) -> bool:
     return next_pos[0] < 0 or next_pos[1] < 0 \
@@ -47,3 +48,5 @@ class Snake:
   def _checkBodyCollision(self, next_pos: tuple) -> bool:
     return next_pos in self.body and next_pos != self.body[0]
  
+  def _checkOpponentCollision(self, next_pos: tuple, oponnent) -> bool:
+    return next_pos in tuple(oponnent.body[0:oponnent.size - 1]) + oponnent.nextPos()

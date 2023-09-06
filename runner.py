@@ -46,7 +46,7 @@ class Runner:
             for idx, player in enumerate([self.player0, self.player1]):
               next_pos = player.nextPos()
 
-              if player.checkCollision(next_pos):
+              if player.checkCollision(next_pos, self.player0 if idx == 1 else self.player1):
                 collision[idx] = True
                 player.color = (255, 0, 0)
               else:
