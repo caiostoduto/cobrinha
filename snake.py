@@ -3,11 +3,10 @@ import pygame
 SNAKE_SIZE = 4
 
 class Snake:
-  def __init__(self, dis, block_size: tuple) -> None:
+  def __init__(self, dis, block_size: tuple, start_pos) -> None:
     self.dis = dis
     self.block_size = block_size
-    self.start_pos = tuple(sum(ti) / 2 for ti in zip(dis.get_size(), block_size))
-    self.restart()
+    self.start_pos = start_pos
 
   def restart(self) -> None:
     self.size = SNAKE_SIZE

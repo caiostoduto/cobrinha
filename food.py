@@ -3,17 +3,16 @@ import pygame, random
 FOOD_AMOUNT = 5
 
 class Food:
-  def __init__(self, dis, block_size: tuple, snake_body: list) -> None:
+  def __init__(self, dis, block_size: tuple) -> None:
     self.dis = dis
     self.block_size = block_size
-    self.snake_body = snake_body
 
-  def restart(self) -> None:
+  def restart(self, bodies) -> None:
     self.food = []
     for _ in range(FOOD_AMOUNT):
-      self.spawn()
+      self.spawn(bodies)
 
-  def spawn(self) -> None:
+  def spawn(self, bodies) -> None:
     size = self.dis.get_size()
 
     new_food = tuple([
@@ -21,7 +20,7 @@ class Food:
       round(random.randrange(0, size[1] - self.block_size[1]) / 10.0) * 10.0
     ])
 
-    if new_food in self.snake_body or new_food in self.food:
+    if new_food in bodies or new_food in self.food:
       self._createFood(size)
     else:
       self.food.append(new_food)
@@ -32,7 +31,7 @@ class Food:
   def draw(self):
     for pos in self.food:
       pygame.draw.rect(
-        self.dis, (0, 0, 255),
+        self.dis, (255, 255, 255),
         pos + self.block_size
       )
 
