@@ -1,10 +1,7 @@
-import pygame, random
-
-from snake import Snake
+import pygame, snake, food
 
 TICKRATE = 15
 BLOCK_SIZE = (10, 10)
-FOOD_AMOUNT = 5
 
 class Runner:
   # Create pygame window
@@ -14,7 +11,8 @@ class Runner:
     self.dis = pygame.display.set_mode(size)
     self.clock = pygame.time.Clock()
 
-    self.snake = Snake(self.dis, BLOCK_SIZE)
+    self.snake = snake.Snake(self.dis, BLOCK_SIZE)
+    self.food = food.Food(self.dis, BLOCK_SIZE, self.snake.body)
     self._restart()
 
   # Game loop
@@ -38,8 +36,8 @@ class Runner:
               self.snake.color = (255, 0, 0)
               self._updateCaption()
             else:
+              self._checkFood(next_pos)
               self.snake.move(next_pos)
-              self._checkFood()
             self._draw()
 
           self.clock.tick(TICKRATE)
@@ -52,36 +50,20 @@ class Runner:
     quit()
 
   def _updateCaption(self):
-    pygame.display.set_caption(f'Cobrinha by Caio Stoduto © 2023 | Score: {self.score} | Status: {self.status}')
+    pygame.display.set_caption(f'Cobrinha by Caio Stoduto © 2023 | Score: {self.snake.size - snake.SNAKE_SIZE} | Status: {self.status}')
 
-  def _checkFood(self):
-    if self.snake.body[0] in self.food:
-      self.food.remove(self.snake.body[0])
+  def _checkFood(self, next_pos: tuple):
+    if self.food.checkCollision(next_pos):
+      self.food.remove(next_pos)
       self.snake.size += 1
-      self.score += 1
+      self.food.spawn()
       self._updateCaption()
-      self._createFood(self.dis.get_size())
-
-  def _createFood(self, size):
-    new_food = tuple([
-      round(random.randrange(0, size[0] - BLOCK_SIZE[0]) / 10.0) * 10.0,
-      round(random.randrange(0, size[1] - BLOCK_SIZE[1]) / 10.0) * 10.0
-    ])
-
-    if new_food in self.snake.body or new_food in self.food:
-      self._createFood(size)
-    else:
-      self.food.append(new_food)
 
   def _restart(self):
     self.status = "Running"
     self.snake.restart()
-    self.score = 0
+    self.food.restart()
     self._updateCaption()
-
-    self.food = []
-    for _ in range(FOOD_AMOUNT):
-      self._createFood(self.dis.get_size())
 
   def _controls(self, event):
     match event.key:
@@ -99,15 +81,8 @@ class Runner:
   def _draw(self):
     self.dis.fill((0, 0, 0))
     self.snake.draw()
-    self._drawFood()
+    self.food.draw()
     pygame.display.update()
-
-  def _drawFood(self):
-    for pos in self.food:
-      pygame.draw.rect(
-        self.dis, (0, 0, 255),
-        pos + BLOCK_SIZE
-      )
 
 if __name__ == '__main__':
   Runner((990, 490)).run()
