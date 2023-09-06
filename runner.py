@@ -47,12 +47,11 @@ class Runner:
 
             for idx, player in enumerate([self.player0, self.player1]):
               next_pos = player.nextPos()
-
+              self._checkFood(player, next_pos)
               if player.checkCollision(next_pos, self.player0 if idx == 1 else self.player1):
                 collision[idx] = True
                 player.color = (255, 0, 0)
               else:
-                self._checkFood(player, next_pos)
                 player.move(next_pos)
             
             self._draw()
