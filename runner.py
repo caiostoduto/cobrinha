@@ -1,4 +1,4 @@
-import pygame, re, snake, food
+import pygame, snake, food
 
 TICKRATE = 15
 BLOCK_SIZE = (10, 10)
@@ -15,13 +15,15 @@ class Runner:
     self.player0 = snake.Snake(
       self.dis,
       BLOCK_SIZE,
-      tuple(10 * round(ti[0] / 40) for ti in zip(self.dis.get_size(), BLOCK_SIZE))
+      tuple(10 * round(ti[0] / 40) for ti in zip(self.dis.get_size(), BLOCK_SIZE)),
+      (0, 255, 0)
     )
 
     self.player1 = snake.Snake(
       self.dis,
       BLOCK_SIZE,
-      tuple(10 * round(3 * ti[0] / 40) for ti in zip(self.dis.get_size(), BLOCK_SIZE))
+      tuple(10 * round(3 * ti[0] / 40) for ti in zip(self.dis.get_size(), BLOCK_SIZE)),
+      (0, 0, 255)
     )
 
     self.food = food.Food(self.dis, BLOCK_SIZE)
